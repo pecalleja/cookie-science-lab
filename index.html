@@ -1,0 +1,251 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
+  <title>Cookie Science Lab</title>
+
+  <!-- iPad / iOS PWA support -->
+  <meta name="apple-mobile-web-app-capable" content="yes">
+  <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+  <meta name="apple-mobile-web-app-title" content="Cookie Lab">
+  <meta name="theme-color" content="#8B6914">
+  <link rel="apple-touch-icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><text y='.9em' font-size='90'>🍪</text></svg>">
+  <link rel="manifest" href="manifest.json">
+
+  <link rel="stylesheet" href="fonts/fonts.css">
+  <link rel="stylesheet" href="styles.css">
+  <script src="vendor/chart.umd.min.js"></script>
+</head>
+<body>
+
+  <!-- ============ NAV BAR ============ -->
+  <nav class="navbar">
+    <div class="nav-brand">
+      <span class="nav-icon">&#127850;</span>
+      <span class="nav-title">Cookie Science Lab</span>
+    </div>
+    <div class="nav-links">
+      <button class="nav-btn active" data-view="taste">
+        <span class="btn-icon">&#127849;</span> Taste Test
+      </button>
+      <button class="nav-btn" data-view="results">
+        <span class="btn-icon">&#128202;</span> Results
+      </button>
+      <button class="nav-btn" data-view="compare">
+        <span class="btn-icon">&#128300;</span> Compare
+      </button>
+      <button class="nav-btn" data-view="hypothesis">
+        <span class="btn-icon">&#128218;</span> Notebook
+      </button>
+    </div>
+  </nav>
+
+  <!-- ============ TASTE TEST VIEW ============ -->
+  <section id="view-taste" class="view active">
+    <div class="view-header">
+      <h1>Pick a Cookie to Taste!</h1>
+      <p class="subtitle">Select one of the flour types below, taste the cookie, then rate it.</p>
+    </div>
+
+    <!-- Flour Selection Cards -->
+    <div class="flour-grid" id="flour-grid">
+      <!-- Cards injected by JS -->
+    </div>
+
+    <!-- Rating Panel (hidden until a flour is selected) -->
+    <div class="rating-panel hidden" id="rating-panel">
+      <div class="rating-header">
+        <img id="rating-cookie-img" src="" alt="cookie">
+        <div>
+          <h2 id="rating-flour-name"></h2>
+          <p id="rating-flour-fact" class="flour-fact"></p>
+        </div>
+      </div>
+
+      <div class="taster-input">
+        <label for="taster-name">Your Name</label>
+        <input type="text" id="taster-name" placeholder="Who's tasting?" maxlength="30" autocomplete="off">
+      </div>
+
+      <div class="sliders">
+        <div class="slider-group">
+          <div class="slider-label">
+            <span class="slider-emoji">&#129380;</span>
+            <span>Crispiness</span>
+            <span class="slider-value" id="val-crispiness">5</span>
+          </div>
+          <input type="range" min="1" max="10" value="5" id="slider-crispiness" class="themed-slider slider-crispy">
+          <div class="slider-ends"><span>Soft</span><span>Super Crispy</span></div>
+        </div>
+
+        <div class="slider-group">
+          <div class="slider-label">
+            <span class="slider-emoji">&#9729;&#65039;</span>
+            <span>Softness</span>
+            <span class="slider-value" id="val-softness">5</span>
+          </div>
+          <input type="range" min="1" max="10" value="5" id="slider-softness" class="themed-slider slider-soft">
+          <div class="slider-ends"><span>Hard</span><span>Pillowy Soft</span></div>
+        </div>
+
+        <div class="slider-group">
+          <div class="slider-label">
+            <span class="slider-emoji">&#129472;</span>
+            <span>Chewiness</span>
+            <span class="slider-value" id="val-chewiness">5</span>
+          </div>
+          <input type="range" min="1" max="10" value="5" id="slider-chewiness" class="themed-slider slider-chewy">
+          <div class="slider-ends"><span>Crumbly</span><span>Super Chewy</span></div>
+        </div>
+      </div>
+
+      <button class="btn-submit" id="btn-submit">
+        <span>&#127850;</span> Submit Rating
+      </button>
+    </div>
+
+    <!-- Success Toast -->
+    <div class="toast hidden" id="toast">
+      <span>&#127881;</span> Rating saved! Try another cookie!
+    </div>
+  </section>
+
+  <!-- ============ RESULTS VIEW ============ -->
+  <section id="view-results" class="view">
+    <div class="view-header">
+      <h1>Results Dashboard</h1>
+      <p class="subtitle">See how each flour type scored across all tasters.</p>
+    </div>
+
+    <div class="results-stats" id="results-stats">
+      <div class="stat-card">
+        <span class="stat-number" id="stat-tastings">0</span>
+        <span class="stat-label">Total Tastings</span>
+      </div>
+      <div class="stat-card">
+        <span class="stat-number" id="stat-tasters">0</span>
+        <span class="stat-label">Tasters</span>
+      </div>
+      <div class="stat-card">
+        <span class="stat-number" id="stat-leader">-</span>
+        <span class="stat-label">Top Flour</span>
+      </div>
+    </div>
+
+    <!-- Radar chart per flour -->
+    <div class="chart-grid" id="chart-grid">
+      <!-- Charts injected by JS -->
+    </div>
+
+    <!-- Leaderboard -->
+    <div class="leaderboard-section">
+      <h2>&#127942; Flour Leaderboard</h2>
+      <div class="leaderboard" id="leaderboard">
+        <!-- Rows injected by JS -->
+      </div>
+    </div>
+
+    <!-- Individual Ratings Table -->
+    <div class="ratings-table-section">
+      <h2>&#128203; All Ratings</h2>
+      <div class="table-wrapper">
+        <table class="ratings-table" id="ratings-table">
+          <thead>
+            <tr>
+              <th>Taster</th>
+              <th>Flour</th>
+              <th>&#129380; Crispy</th>
+              <th>&#9729;&#65039; Soft</th>
+              <th>&#129472; Chewy</th>
+              <th>Avg</th>
+              <th></th>
+            </tr>
+          </thead>
+          <tbody id="ratings-tbody"></tbody>
+        </table>
+      </div>
+      <p class="empty-msg hidden" id="no-ratings-msg">No ratings yet. Go taste some cookies!</p>
+    </div>
+
+    <div class="export-section">
+      <button class="btn-export" id="btn-export-csv">&#128190; Export CSV</button>
+      <button class="btn-export btn-danger" id="btn-clear-data">&#128465; Clear All Data</button>
+    </div>
+  </section>
+
+  <!-- ============ COMPARE VIEW ============ -->
+  <section id="view-compare" class="view">
+    <div class="view-header">
+      <h1>Compare Flours</h1>
+      <p class="subtitle">See all flours on one radar chart to spot the differences.</p>
+    </div>
+
+    <div class="compare-chart-container">
+      <canvas id="compare-radar"></canvas>
+    </div>
+
+    <div class="compare-bars-section">
+      <h2>&#128202; Score Breakdown</h2>
+      <div class="compare-bars" id="compare-bars">
+        <!-- Bars injected by JS -->
+      </div>
+    </div>
+
+    <!-- Fun Insights -->
+    <div class="insights-section" id="insights-section">
+      <h2>&#128161; Science Insights</h2>
+      <div class="insights-cards" id="insights-cards"></div>
+    </div>
+  </section>
+
+  <!-- ============ HYPOTHESIS / NOTEBOOK VIEW ============ -->
+  <section id="view-hypothesis" class="view">
+    <div class="view-header">
+      <h1>Science Notebook</h1>
+      <p class="subtitle">Record your hypothesis, observations, and conclusions like a real scientist!</p>
+    </div>
+
+    <div class="notebook">
+      <div class="notebook-section">
+        <h3>&#129504; Hypothesis</h3>
+        <p class="notebook-hint">What do you think will happen? Which flour will make the crispiest/softest/chewiest cookie and why?</p>
+        <textarea id="hypothesis-text" placeholder="I think that... because..." rows="4"></textarea>
+      </div>
+
+      <div class="notebook-section">
+        <h3>&#128064; Observations</h3>
+        <p class="notebook-hint">What did you notice while baking? Did any dough look or feel different?</p>
+        <textarea id="observations-text" placeholder="While baking, I noticed that..." rows="4"></textarea>
+      </div>
+
+      <div class="notebook-section">
+        <h3>&#127891; Conclusion</h3>
+        <p class="notebook-hint">Based on the data, was your hypothesis correct? What did you learn?</p>
+        <textarea id="conclusion-text" placeholder="Based on the results..." rows="4"></textarea>
+      </div>
+
+      <div class="notebook-section">
+        <h3>&#128248; Flour Info Cards</h3>
+        <div class="flour-info-grid" id="flour-info-grid">
+          <!-- Info cards injected by JS -->
+        </div>
+      </div>
+
+      <button class="btn-submit" id="btn-save-notebook">
+        <span>&#128190;</span> Save Notebook
+      </button>
+      <div class="toast hidden" id="notebook-toast">
+        <span>&#9989;</span> Notebook saved!
+      </div>
+    </div>
+  </section>
+
+  <footer>
+    <p>Cookie Science Lab &mdash; A Baking Science Project &#127850;</p>
+  </footer>
+
+  <script src="logic.js"></script>
+  <script src="app.js"></script>
+</body>
+</html>
