@@ -390,9 +390,9 @@ function renderCompareBars() {
   const avgs = getAvgByFlour(ratings);
 
   const dimensions = [
-    { key: 'crispiness', label: '\u{1F9EC} Crispiness', css: 'crispy' },
-    { key: 'softness', label: '\u2601\uFE0F Softness', css: 'soft' },
-    { key: 'chewiness', label: '\u{1F9C0} Chewiness', css: 'chewy' }
+    { key: 'crispiness', label: 'Crispiness', css: 'crispy' },
+    { key: 'softness', label: 'Softness', css: 'soft' },
+    { key: 'chewiness', label: 'Chewiness', css: 'chewy' }
   ];
 
   dimensions.forEach(dim => {

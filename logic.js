@@ -117,7 +117,7 @@ function getInsights(ratings) {
   const crispiest = withData.reduce((best, f) =>
     avgByFlour[f.id].crispiness > avgByFlour[best.id].crispiness ? f : best, withData[0]);
   insights.push({
-    title: '\u{1F3C6} Crispiest Cookie: ' + crispiest.name,
+    title: 'Crispiest Cookie: ' + crispiest.name,
     dimension: 'crispiness',
     flour: crispiest.id,
     score: avgByFlour[crispiest.id].crispiness
@@ -126,7 +126,7 @@ function getInsights(ratings) {
   const softest = withData.reduce((best, f) =>
     avgByFlour[f.id].softness > avgByFlour[best.id].softness ? f : best, withData[0]);
   insights.push({
-    title: '\u2601\uFE0F Softest Cookie: ' + softest.name,
+    title: 'Softest Cookie: ' + softest.name,
     dimension: 'softness',
     flour: softest.id,
     score: avgByFlour[softest.id].softness
@@ -135,7 +135,7 @@ function getInsights(ratings) {
   const chewiest = withData.reduce((best, f) =>
     avgByFlour[f.id].chewiness > avgByFlour[best.id].chewiness ? f : best, withData[0]);
   insights.push({
-    title: '\u{1F9C0} Chewiest Cookie: ' + chewiest.name,
+    title: 'Chewiest Cookie: ' + chewiest.name,
     dimension: 'chewiness',
     flour: chewiest.id,
     score: avgByFlour[chewiest.id].chewiness
